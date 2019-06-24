@@ -3,6 +3,7 @@ package main
 import (
     "fmt"
     "io"
+    "io/ioutil"
     "log"
     "net/http"
     "net/url"
@@ -38,7 +39,13 @@ func proxyImageRequest(writer *http.ResponseWriter, destUrl *url.URL) {
             // 404 not found
         default:
             fmt.Println(response)
+            defer response.Body.Close()
 
+            body, err := ioutil.ReadAll(response.Body)
+            if err != nil {
+                log.Println(err.Error())
+            }
+            (*writer).Write(body)
         }
 
     } else {
