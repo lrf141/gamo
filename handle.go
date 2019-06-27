@@ -32,7 +32,6 @@ func digestHandler(w http.ResponseWriter, req *http.Request) {
         sum := fmt.Sprintf("%x",hmc.Sum(nil))
 
         if path["digest"] == sum {
-            // process url
             destUrl, err := url.Parse(destUrl)
 
             if err != nil {
@@ -41,12 +40,13 @@ func digestHandler(w http.ResponseWriter, req *http.Request) {
 
             proxyImageRequest(&w, destUrl)
         } else {
-            // 404
-            io.WriteString(w, "404 not found")
+            w.WriteHeader(404)
+            io.WriteString(w, "not found")
         }
 
     } else {
-        io.WriteString(w, "404 not found")
+        w.WriteHeader(404)
+        io.WriteString(w, "not found")
     }
 }
 

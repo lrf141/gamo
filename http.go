@@ -46,6 +46,7 @@ func proxyImageRequest(writer *http.ResponseWriter, destUrl *url.URL) {
         }
 
     } else {
+        (*writer).WriteHeader(400)
         io.WriteString(*writer, "unknown protocol")
     }
 }
