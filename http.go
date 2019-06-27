@@ -20,9 +20,8 @@ func proxyImageRequest(writer *http.ResponseWriter, destUrl *url.URL) {
         }
 
         addTransferredHeaders(newRequest)
-        fmt.Println(newRequest)
 
-        timeout := time.Duration(100 * time.Second)
+        timeout := time.Duration(10 * time.Second)
         client := http.Client{
             Timeout: timeout,
         }
@@ -38,9 +37,7 @@ func proxyImageRequest(writer *http.ResponseWriter, destUrl *url.URL) {
         case 304:
             // 404 not found
         default:
-            fmt.Println(response)
             defer response.Body.Close()
-
             body, err := ioutil.ReadAll(response.Body)
             if err != nil {
                 log.Println(err.Error())

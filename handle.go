@@ -40,7 +40,6 @@ func digestHandler(w http.ResponseWriter, req *http.Request) {
             }
 
             proxyImageRequest(&w, destUrl)
-            io.WriteString(w, "checksum!!")
         } else {
             // 404
             io.WriteString(w, "404 not found")

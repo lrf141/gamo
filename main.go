@@ -7,7 +7,6 @@ import (
 )
 
 func main() {
-
     router := mux.NewRouter()
 
     router.HandleFunc("/status", statusHandler)
