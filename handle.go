@@ -38,7 +38,7 @@ func digestHandler(w http.ResponseWriter, req *http.Request) {
                 log.Fatal(err.Error())
             }
 
-            proxyImageRequest(&w, destUrl)
+            proxyImageRequest(&w, destUrl, maxRedirect)
         } else {
             w.WriteHeader(404)
             io.WriteString(w, "not found")

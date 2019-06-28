@@ -1,7 +1,6 @@
 package main
 
 import (
-    "fmt"
     "io"
     "io/ioutil"
     "log"
@@ -10,7 +9,7 @@ import (
     "time"
 )
 
-func proxyImageRequest(writer *http.ResponseWriter, destUrl *url.URL) {
+func proxyImageRequest(writer *http.ResponseWriter, destUrl *url.URL, remainRedirect int) {
 
     if destUrl.Scheme == "http" || destUrl.Scheme == "https" {
 
@@ -34,9 +33,40 @@ func proxyImageRequest(writer *http.ResponseWriter, destUrl *url.URL) {
 
         switch response.StatusCode {
         case 301,302,303,307:
-            fmt.Println(response.StatusCode)
+
+            if remainRedirect <= 0 {
+
+                (*writer).WriteHeader(404)
+                io.WriteString(*writer, "Exceeded max depth")
+
+            } else if location := response.Header.Get("Location"); location != "" {
+
+                (*writer).WriteHeader(404)
+                io.WriteString(*writer, "redirect with no location")
+
+            } else {
+
+                newUrl, err := url.Parse(response.Header.Get("Location"))
+                if err != nil {
+                    log.Fatal(err.Error())
+                }
+
+                if newUrl.Scheme == "" {
+                    newUrl.Scheme = destUrl.Scheme
+                }
+
+                if newUrl.Host == "" {
+                    newUrl.Host = destUrl.Host
+                }
+
+                proxyImageRequest(writer, newUrl, remainRedirect-1)
+
+            }
         case 304:
-            // 404 not found
+
+            (*writer).WriteHeader(304)
+            io.WriteString(*writer, "not modified")
+
         default:
 
             body, err := ioutil.ReadAll(response.Body)
@@ -45,11 +75,14 @@ func proxyImageRequest(writer *http.ResponseWriter, destUrl *url.URL) {
             }
             setNewHeader(writer, response)
             (*writer).Write(body)
+
         }
 
     } else {
+
         (*writer).WriteHeader(400)
         io.WriteString(*writer, "unknown protocol")
+
     }
 }
 
