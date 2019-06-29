@@ -95,7 +95,7 @@ func proxyImageRequest(writer *http.ResponseWriter, destUrl *url.URL, remainRedi
 func addTransferredHeaders(request *http.Request) {
 	request.Header.Set("Via", "Gamo Asset Proxy")
 	request.Header.Set("User-Agent", "Gamo Asset Proxy")
-	request.Header.Set("Accept", "image/*")
+	request.Header.Set("Accept", acceptType.String())
 	request.Header.Set("Accept-Encoding", "")
 	request.Header.Set("X-Frame-Options", "deny")
 	request.Header.Set("X-XSS-Protection", "1; mode=block")
