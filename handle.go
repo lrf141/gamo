@@ -27,7 +27,7 @@ func digestHandler(w http.ResponseWriter, req *http.Request) {
 			log.Fatal(err.Error())
 		}
 
-		hmc := hmac.New(sha1.New, []byte(sharedKey))
+		hmc := hmac.New(sha1.New, []byte(env.SharedKey))
 		io.WriteString(hmc, destUrl)
 		sum := fmt.Sprintf("%x", hmc.Sum(nil))
 
@@ -38,7 +38,7 @@ func digestHandler(w http.ResponseWriter, req *http.Request) {
 				log.Fatal(err.Error())
 			}
 
-			proxyImageRequest(&w, destUrl, maxRedirect)
+			proxyImageRequest(&w, destUrl, env.MaxRedirect)
 		} else {
 			w.WriteHeader(404)
 			io.WriteString(w, "not found")

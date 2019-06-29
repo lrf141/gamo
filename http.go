@@ -20,7 +20,7 @@ func proxyImageRequest(writer *http.ResponseWriter, destUrl *url.URL, remainRedi
 
 		addTransferredHeaders(newRequest)
 
-		timeout := time.Duration(10 * time.Second)
+		timeout := time.Duration(time.Duration(env.SocketTimeout) * time.Second)
 		client := http.Client{
 			Timeout: timeout,
 		}
@@ -31,7 +31,7 @@ func proxyImageRequest(writer *http.ResponseWriter, destUrl *url.URL, remainRedi
 		}
 		defer response.Body.Close()
 
-		if contentLengthLimit <= response.ContentLength {
+		if env.ContentLengthLimit <= response.ContentLength {
 			(*writer).WriteHeader(404)
 			io.WriteString(*writer, "Content Length Exceeded")
 			return

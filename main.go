@@ -1,12 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 )
 
 func main() {
+
+	initEnv()
+	fmt.Println(env)
+
 	router := mux.NewRouter()
 
 	router.HandleFunc("/status", statusHandler)
@@ -15,7 +20,7 @@ func main() {
 
 	http.Handle("/", router)
 
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	if err := http.ListenAndServe(env.getAddr(), nil); err != nil {
 		log.Fatal(err.Error())
 	}
 
