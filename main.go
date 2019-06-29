@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -10,7 +9,6 @@ import (
 func main() {
 
 	initEnv()
-	fmt.Println(env)
 
 	router := mux.NewRouter()
 
