@@ -31,6 +31,12 @@ func proxyImageRequest(writer *http.ResponseWriter, destUrl *url.URL, remainRedi
         }
         defer response.Body.Close()
 
+        if contentLengthLimit <= response.ContentLength {
+            (*writer).WriteHeader(404)
+            io.WriteString(*writer, "Content Length Exceeded")
+            return
+        }
+
         switch response.StatusCode {
         case 301,302,303,307:
 
@@ -42,7 +48,7 @@ func proxyImageRequest(writer *http.ResponseWriter, destUrl *url.URL, remainRedi
             } else if location := response.Header.Get("Location"); location != "" {
 
                 (*writer).WriteHeader(404)
-                io.WriteString(*writer, "redirect with no location")
+                io.WriteString(*writer, "Redirect with no location")
 
             } else {
 
@@ -65,7 +71,7 @@ func proxyImageRequest(writer *http.ResponseWriter, destUrl *url.URL, remainRedi
         case 304:
 
             (*writer).WriteHeader(304)
-            io.WriteString(*writer, "not modified")
+            io.WriteString(*writer, "Not modified")
 
         default:
 
@@ -81,7 +87,7 @@ func proxyImageRequest(writer *http.ResponseWriter, destUrl *url.URL, remainRedi
     } else {
 
         (*writer).WriteHeader(400)
-        io.WriteString(*writer, "unknown protocol")
+        io.WriteString(*writer, "Unknown protocol")
 
     }
 }
